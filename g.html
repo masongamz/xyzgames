@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>XYZGames Pro</title>
+
+<style>
+body{margin:0;font-family:Arial;background:#f5f7fb}
+
+/* LOGIN */
+#loginPage{
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:linear-gradient(to right,#1e6cff,#00aaff);
+}
+
+.box{
+  background:white;
+  padding:20px;
+  border-radius:12px;
+  width:320px;
+}
+
+input{
+  width:100%;
+  padding:10px;
+  margin:8px 0;
+}
+
+button{
+  width:100%;
+  padding:10px;
+  background:#1e6cff;
+  color:white;
+  border:none;
+  cursor:pointer;
+}
+
+/* GAME */
+#gamePage{display:none}
+
+.navbar{
+  background:white;
+  padding:15px;
+  display:flex;
+  justify-content:space-between;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
+  gap:10px;
+  padding:20px;
+}
+
+.card{
+  background:white;
+  padding:10px;
+  text-align:center;
+  cursor:pointer;
+  border-radius:10px;
+}
+
+.card:hover{transform:scale(1.05)}
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN -->
+<div id="loginPage">
+  <div class="box">
+    <h2>XYZ Login</h2>
+    <input id="u" placeholder="Username">
+    <input id="p" type="password" placeholder="Password">
+    <button onclick="login()">Login / Sign Up</button>
+  </div>
+</div>
+
+<!-- GAME -->
+<div id="gamePage">
+
+  <div class="navbar">
+    <div>🎮 XYZGames</div>
+    <div>
+      <span id="user"></span>
+      <button onclick="logout()">Logout</button>
+    </div>
+  </div>
+
+  <div class="grid" id="grid"></div>
+</div>
+
+<script>
+
+/* =========================
+   USER SYSTEM
+========================= */
+
+function login(){
+  let u = document.getElementById("u").value;
+  let p = document.getElementById("p").value;
+
+  if(!u || !p){
+    alert("Fill all fields");
+    return;
+  }
+
+  localStorage.setItem("xyz_currentUser", JSON.stringify({name:u}));
+
+  showGame();
+}
+
+let user = JSON.parse(localStorage.getItem("xyz_currentUser") || "null");
+
+if(user){
+  showGame();
+}
+
+/* =========================
+   SHOW GAME PAGE
+========================= */
+function showGame(){
+  user = JSON.parse(localStorage.getItem("xyz_currentUser"));
+
+  document.getElementById("loginPage").style.display = "none";
+  document.getElementById("gamePage").style.display = "block";
+
+  document.getElementById("user").innerText = "👤 " + user.name;
+
+  loadGames();
+}
+
+/* =========================
+   LOGOUT
+========================= */
+function logout(){
+  localStorage.removeItem("xyz_currentUser");
+  location.reload();
+}
+
+/* =========================
+   REAL GAME LIST (FIXED)
+========================= */
+const games = [
+  {name:"2048", url:"https://play2048.co/"},
+  {name:"Snake", url:"https://playsnake.org/"},
+  {name:"Cookie Clicker", url:"https://orteil.dashnet.org/cookieclicker/"},
+  {name:"Slope", url:"https://slope-game.github.io/"},
+  {name:"Drift Hunters", url:"https://drift-hunters.com/"},
+  {name:"Krunker", url:"https://krunker.io"},
+  {name:"Shell Shockers", url:"https://shellshock.io"}
+];
+
+function loadGames(){
+  let grid = document.getElementById("grid");
+  grid.innerHTML = "";
+
+  games.forEach(g=>{
+    let div = document.createElement("div");
+    div.className = "card";
+    div.innerText = g.name;
+
+   div.onclick = () => {
+  const url = g.url;
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.target = "_blank";
+  a.rel = "noopener noreferrer";
+  a.click();
+};
+
+    grid.appendChild(div);
+  });
+}
+
+</script>
+
+</body>
+</html>
